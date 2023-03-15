@@ -1,77 +1,73 @@
-#include "holberton.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include "main.h"
 
 /**
- * setwords  - create the words to place in the word array
- *
- * @ac: amount of words including NULL
- * @str: input string
- * Return: array of the words
+ * count_word - helper function to count the number of words in a string
+ * @s: string to evaluate
+ * Return: number of words
  */
-char **setwords(int ac, char *str)
+int count_word(char *s)
 {
-	int i, j, al, w, k, l;
-	char **words;
+	int flag, c, w;
 
-	if (ac == 0)
-		return (NULL);
-	words = malloc(sizeof(char *) * ac + 1);
-	if (words == NULL)
-		return (NULL);
-
-	j = 0, k = 0, w = 0;
-	for (i = 0; str[i] != '\0' && w < ac; i++)
+	flag = 0;
+	w = 0;
+	for (c = 0; s[c] != '\0'; c++)
 	{
-		if (str[i] != ' ')
-		{
-			al = 0;
-			j = i;
-			while (str[j] != '\0' && str[j] != ' ')
+		if (s[c] == ' ')
+			flag = 0;
+		else
+			if (flag == 0)
 			{
-				j++;
-				al++;
+				flag = 1;
+				w++;
 			}
-			words[w] = malloc(sizeof(char) * (al + 1));
-			if (words[w] == NULL)
-			{
-				for (l = 0; l < w; l++)
-					free(words[l]);
-				free(words);
-				return (NULL);
-			}
-			for (k = 0; k < al; k++, i++)
-			{
-				words[w][k] = str[i];
-			}
-			words[w][k] = '\0';
-			w++;
-		}
 	}
-	words[w] = NULL;
-	return (words);
+
+	return (w);
 }
 
 /**
- * strtow - creates an array of words from given string
- *
- * @str: input string
- * Return: array of the words
+ * strtow - splits a string into words
+ * @str: string to split
+ * Return: pointer to an array of strings (Success)
+ * or NULL (Error)
  */
 char **strtow(char *str)
 {
-	int ac, i;
+	char **matrix, *tmp;
+	int i, k = 0, len = 0, words, c = 0, start, end;
 
-	if (str == NULL || str[0] == '\0')
+	while (*(str + len))
+	len++;
+	words = count_word(str);
+	if (words == 0)
+	return (NULL);
+	matrix = (char **) malloc(sizeof(char *) * (words + 1));
+	if (matrix == NULL)
+	return (NULL);
+	for (i = 0; i <= len; i++)
+	{
+	if (str[i] == ' ' || str[i] == '\0')
+	{
+		if (c)
+		{
+		end = i;
+		tmp = (char *) malloc(sizeof(char) * (c + 1));
+	if (tmp == NULL)
 		return (NULL);
+	while (start < end)
+	*tmp++ = str[start++];
+	*tmp = '\0';
+	matrix[k] = tmp - c;
+	k++;
+	c = 0;
+	}
+	}
+	else if (c++ == 0)
+	start = i;
+	}
+	matrix[k] = NULL;
 
-	/* ac determines amount of words in string*/
-	i = 0, ac = 0;
-	for (i = 0; str[i] != '\0'; i++)
-		if (str[i] != ' ' && (str[i + 1] == ' ' || str[i + 1] == '\0'))
-			ac++;
-
-	/* malloc space for each character added per word */
-	/* while at a specific word array, add chars to it */
-	return (setwords(ac, str));
+	return (matrix);
 }
